@@ -1,84 +1,66 @@
 ﻿<div style="padding:10px;">
 
-<IgbLegend Name="Legend"
-               @ref="legend" 
+    <IgbLegend @ref="_legend"
                Orientation="LegendOrientation.Horizontal">
+    </IgbLegend>
 
-</IgbLegend>
+    <IgbDataChart Height="320px" Width="320px" Legend="_legend">
 
+        <IgbNumericXAxis Name="xAxis" MinimumValue="0" MaximumValue="6" />
 
-    <IgbDataChart Height="320px" Width="320px" Name="chart" @ref="chart">
+        <IgbNumericYAxis Name="yAxis" MinimumValue="0" MaximumValue="10" />
 
-    <IgbNumericXAxis Name="xAxis" MinimumValue="0" MaximumValue="6" />
+        <IgbScatterSeries DataSource="@_dataSourceA"
+                          Title="マーカー A"
+                          XMemberPath="@nameof(SampleDataType.XValue)"
+                          YMemberPath="@nameof(SampleDataType.YValue)"
+                          XAxisName="xAxis"
+                          YAxisName="yAxis"
+                          MarkerBrush="yellow"
+                          MarkerOutline="black"
+                          MarkerThickness="2" />
 
-    <IgbNumericYAxis Name="yAxis" MinimumValue="0" MaximumValue="10" />
-
-    <IgbScatterSeries DataSource="@DataSourceA"
-                       Title="マーカー A"
-                       XMemberPath="XValue"
-                       YMemberPath="YValue"
-                       XAxisName="xAxis"
-                       YAxisName="yAxis"
-                       MarkerBrush="yellow"
-                       MarkerOutline="black"
-                       MarkerThickness="2" />
-
-
-    <IgbScatterSeries DataSource="@DataSourceB"
+        <IgbScatterSeries DataSource="@_dataSourceB"
                           Title="マーカー B"
-                       XMemberPath="XValue"
-                       YMemberPath="YValue"
-                       XAxisName="xAxis"
-                       YAxisName="yAxis"
-                       MarkerBrush="red"
-                       MarkerOutline="transparent"/>
+                          XMemberPath="@nameof(SampleDataType.XValue)"
+                          YMemberPath="@nameof(SampleDataType.YValue)"
+                          XAxisName="xAxis"
+                          YAxisName="yAxis"
+                          MarkerBrush="red"
+                          MarkerOutline="transparent" />
 
-</IgbDataChart>
+    </IgbDataChart>
 
 </div>
 
 @code {
-    private IgbLegend legend = new();
-    private IgbDataChart chart = new();
-    private Action? BindElements { get; set; }
+    private IgbLegend? _legend;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
-        var legend = this.legend;
-        var chart = this.chart;
-
-        this.BindElements = () =>
+        if (firstRender)
         {
-            chart.Legend = this.legend;
-        };
-        this.BindElements();
-
+            StateHasChanged();
+        }
     }
 
-
-    
-    
-    
     public record SampleDataType(string Name, double XValue, double YValue);
 
-    public IEnumerable<SampleDataType> DataSourceA { get; } = new SampleDataType[]
-    {
+    private IEnumerable<SampleDataType> _dataSourceA =
+    [
       new (Name: "item1", XValue: 1, YValue: 8),
       new (Name: "item2", XValue: 2, YValue: 7),
       new (Name: "item3", XValue: 3, YValue: 7.5),
       new (Name: "item4", XValue: 4, YValue: 6),
       new (Name: "item5", XValue: 5, YValue: 9),
+    ];
 
-    };
-
-    public IEnumerable<SampleDataType> DataSourceB { get; } = new SampleDataType[]
-    {
+    private IEnumerable<SampleDataType> _dataSourceB =
+    [
       new (Name: "item1", XValue: 1, YValue: 2),
       new (Name: "item2", XValue: 2, YValue: 3),
       new (Name: "item3", XValue: 3, YValue: 1),
       new (Name: "item4", XValue: 4, YValue: 3),
       new (Name: "item5", XValue: 5, YValue: 1.5),
-
-    };
-
+    ];
 }
